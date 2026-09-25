@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mediahub · 多媒体影音中心</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">▶</span>
+      <div>
+        <h1>mediahub</h1>
+        <p class="subtitle">Linux 多媒体影音中心</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input id="search-input" type="search" placeholder="搜索标题 / 文件名…" autocomplete="off">
+      <button id="search-btn" class="btn primary">搜索</button>
+    </div>
+
+    <div class="toolbar">
+      <button id="scan-btn" class="btn">扫描媒体库</button>
+      <button id="stats-btn" class="btn">统计</button>
+      <button id="health-btn" class="btn ghost">健康检查</button>
+    </div>
+  </header>
+
+  <nav class="filters">
+    <div class="filter-group" id="type-filters">
+      <button class="chip active" data-type="">全部</button>
+      <button class="chip" data-type="video">视频</button>
+      <button class="chip" data-type="audio">音频</button>
+      <button class="chip" data-type="image">图片</button>
+    </div>
+
+    <div class="filter-group">
+      <label for="year-filter">年份</label>
+      <select id="year-filter"><option value="">全部</option></select>
+
+      <label for="sort-filter">排序</label>
+      <select id="sort-filter">
+        <option value="created_at:desc">最新入库</option>
+        <option value="updated_at:desc">最近更新</option>
+        <option value="title:asc">标题 A→Z</option>
+        <option value="size:desc">文件最大</option>
+        <option value="duration:desc">时长最长</option>
+        <option value="year:desc">年份最新</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <span id="result-count" class="muted">—</span>
+    </div>
+  </nav>
+
+  <main>
+    <section id="grid-section">
+      <div id="media-grid" class="media-grid"></div>
+      <div id="empty-state" class="empty hidden">
+        <p>媒体库为空。点击右上角「扫描媒体库」开始建立索引。</p>
+        <p class="muted">也可在终端执行：<code>python -m cli.mediahub_cli scan --dir /path/to/media</code></p>
+      </div>
+      <div class="pagination">
+        <button id="prev-page" class="btn ghost">上一页</button>
+        <span id="page-info" class="muted">第 1 / 1 页</span>
+        <button id="next-page" class="btn ghost">下一页</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 播放器 -->
+  <div id="player-modal" class="modal hidden">
+    <div class="modal-content player-content">
+      <button class="modal-close" data-close="player-modal">×</button>
+      <div class="player-head">
+        <h2 id="player-title">—</h2>
+        <p id="player-meta" class="muted"></p>
+      </div>
+      <div class="player-body">
+        <video id="player-video" controls preload="metadata" controlsList="nodownload"></video>
+        <img id="player-image" class="hidden" alt="预览">
+      </div>
+      <div class="player-foot">
+        <button id="player-screenshot" class="btn ghost">截图</button>
+        <button id="player-extract" class="btn ghost">抽取音轨</button>
+        <button id="player-transcode" class="btn primary">转码</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 任务面板 -->
+  <div id="tasks-modal" class="modal hidden">
+    <div class="modal-content tasks-content">
+      <button class="modal-close" data-close="tasks-modal">×</button>
+      <div class="player-head">
+        <h2>后台任务</h2>
+        <p class="muted">转码 / 抽音轨 / 截图 / 扫描</p>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </div>
+  </div>
+
+  <!-- 统计弹窗 -->
+  <div id="stats-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" data-close="stats-modal">×</button>
+      <div class="player-head"><h2>媒体库统计</h2></div>
+      <div id="stats-body" class="stats-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <footer class="footer">
+    <button id="tasks-btn" class="btn ghost">查看后台任务 <span id="task-badge" class="badge hidden">0</span></button>
+    <span class="muted">mediahub v1.0.0 · FastAPI + SQLite + ffmpeg</span>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

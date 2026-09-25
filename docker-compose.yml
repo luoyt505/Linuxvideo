@@ -1,0 +1,32 @@
+# mediahub docker compose 编排
+# 使用：docker compose up -d --build
+# 指定宿主机媒体目录：MEDIA_HOST_DIR=/srv/movies docker compose up -d --build
+
+services:
+  mediahub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mediahub:latest
+    container_name: mediahub
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      # 数据持久化（数据库 / 封面缓存 / 转码输出）
+      - ./data:/app/data
+      # 媒体目录（只读挂载，容器不会修改源文件）
+      - ${MEDIA_HOST_DIR:-./media}:/media:ro
+    environment:
+      APP_NAME: mediahub
+      HOST: 0.0.0.0
+      PORT: 8000
+      DATABASE_URL: sqlite:////app/data/mediahub.db
+      MEDIA_DIRS: /media
+      DATA_DIR: /app/data
+      CACHE_DIR: /app/data/cache
+      TRANSCODE_DIR: /app/data/transcoded
+      SCAN_RECURSIVE: "true"
+      SCAN_THUMBNAILS: "true"
+      WORKER_COUNT: "2"
+      LOG_LEVEL: info
